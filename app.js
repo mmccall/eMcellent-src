@@ -1,8 +1,6 @@
 
 /* Express dependencies */
 var express = require('express')
-  , routes = require('./routes')
-  , user = require('./routes/user')
   , http = require('http')
   , path = require('path');
 
@@ -64,7 +62,8 @@ function findRec (qReq) {
         //TODO:  Swap to 0 as it gets set to 1 post processing.
         while(qResponse.mCodeLintFlag === 0)
         var codeResponse = {codeValue: qResponse.mCodeOutput}
-      res.render('index', { title: 'eMcellent.', codeResponse:codeResponse});
+        var codeInput = {codeValue: qResponse.mCode}
+      res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput});
 
   });
 }
@@ -126,8 +125,9 @@ return inputString;
 });
 
 app.get('/', function(req, res) {
+  var codeInput = {codeValue:"W HELLO WORLD!"}
   var codeResponse = {codeValue:"OUTPUT HERE"}
-  res.render('index', { title: 'eMcellent.', codeResponse:codeResponse });
+  res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput});
 });
 
 http.createServer(app).listen(app.get('port'), function(){

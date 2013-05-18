@@ -6,7 +6,7 @@ block content
     p.lead A most excellent tool for making M/MUMPS code more readable.
     div.row
       form(action='/', method='post')
-        textarea#codeInput.span11(name="inputCode", placeholder="Input code here...") W HELLO WORLD
+        textarea#codeInput.span11(name="inputCode", placeholder="Input code here...")= codeInput.codeValue
         br
         br
         input.btn.btn-danger.btn-large(type="submit", value="Detersificate!")
