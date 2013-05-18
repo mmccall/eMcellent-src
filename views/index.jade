@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  div.container
+    h1= title
+    p.lead A most excellent tool for making M/MUMPS code more readable.
+    div.row
+      form(action='/', method='post')
+        textarea#codeInput.span11(name="inputCode", placeholder="Input code here...") W HELLO WORLD
+        br
+        br
+        input.btn.btn-danger.btn-large(type="submit", value="Detersificate!")
+        br
+      pre#codeOutput.prettyprint= codeResponse.codeValue
+      br
