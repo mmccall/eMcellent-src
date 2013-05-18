@@ -4,6 +4,11 @@ var express = require('express')
   , http = require('http')
   , path = require('path');
 
+/* M Parsing Package Dependencies. */
+
+var mRouting = require('./app/mRouting.js');
+
+
 /* Persistence dependencies */
 /* var fs = require('fs'); */
 var mongoose = require('mongoose');
@@ -59,7 +64,7 @@ function findRec (qReq) {
         if (err) throw err;
         do
         console.log('waiting...');
-        //TODO:  Swap to 0 as it gets set to 1 post processing.
+        //TODO:  Temp flagged to allow text management.
         while(qResponse.mCodeLintFlag === 0)
         var codeResponse = {codeValue: qResponse.mCodeOutput}
         var codeInput = {codeValue: qResponse.mCode}
@@ -72,7 +77,12 @@ function saveRec (qReq) {
   mCodePost.save(function (err) {
     if (!err) {
       console.log('Post Saved');
-      lintMCode(req.body.inputCode);
+      var mCodeOutput = mRouting.mParse(req.body.inputCode);
+      mCodePost.update({mCodeLintFlag: 1, mCodeOutput: mCodeOutput}, function (err, numberAffected, raw) {
+        if (err) return err;
+        //console.log('The number of updated documents was %d', numberAffected);
+        //console.log('The raw response from Mongo was ', raw);
+      });
       findRec({mCode: req.body.inputCode});
     } else {
       throw err;
@@ -87,10 +97,11 @@ saveRec();
 
 function lintMCode (mCode) {
 
+
 //Lint it up.
-var results = lintWRITE(mCode);
+
 //Load up the original file.
-mCodePost.update({mCodeLintFlag: 1, mCodeOutput: results}, function (err, numberAffected, raw) {
+mCodePost.update({mCodeLintFlag: 1, mCodeOutput: mCode}, function (err, numberAffected, raw) {
   if (err) return err;
   //console.log('The number of updated documents was %d', numberAffected);
   //console.log('The raw response from Mongo was ', raw);
