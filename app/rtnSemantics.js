@@ -1,10 +1,8 @@
-//Linter for WRITE.
-// Takes the following inputs:
-// inputString:  The string of code to be cleaned.
 
-function lintWRITE (inputString) {
+exports.deTerse = deTerse;
+
+function deTerse (inputString, inputWord) {
   var inputLength = inputString.length;
-  var inputWord = "WRITE";
 
   for (i=0;i<inputLength;i++) {
     //RULE:  If 1st character is W, walk to next space and evaluate if the string is "WRITE"
