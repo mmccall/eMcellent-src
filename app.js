@@ -11,13 +11,14 @@ var mRouting = require('./app/mRouting.js');
 var mongoose = require('mongoose');
 
 /* Mongo Connection */
-mongoose.connect('mongodb://localhost/mdb', function(err) {
+var conn = mongoose.connect('mongodb://localhost/mdb', function(err) {
   if (!err) {
     console.log("Connected to MongoDB");
   } else {
     throw err;
   }
 });
+
 
 /* Mongo Schema and Code Declaration */
 var mSchema = new mongoose.Schema ({
