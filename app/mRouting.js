@@ -35,7 +35,10 @@ if (splitLines.length === 1) {
 		returnCode="INVALID ROUTINE: LEADING SPACE IN ROUTINE TITLE."
    	    return returnCode;
    	  } else {
-   	  	if (i > 0) {
+   	  	if (i === 0) {
+   	  		lineLabel = splitLines[i];
+   	  		parseResults = "";
+   	  	} else {
    	  		//Extract Line Label, append as start of return code.
    	  		if (splitLines[i].substring(0,1) === " ") {
    	  			lineLabel = " ";
@@ -46,13 +49,31 @@ if (splitLines.length === 1) {
    	  			lineExpression = splitLines[i].substring(lineLabel.length);
    	  		} 
 
-   	  		//1st line never parsed since it should contain the routine name.
-   		  	//console.log("LENGTH: " + splitLines.length);
-   	  		//console.log("INPUT: " + splitLines[i]);
+   	  		//Extract Line Expression, append as end of return code.
+   	  		//TODO:  Filter only checks for a leading quote.  Should fix for trailing quote as well.
+   	  		if (lineExpression.search(";") >= 0) {
+   	  			var commentSplits = lineExpression.split(";");
+   	  			var leadingQuoteFlag = 0;
+   	  			var trailingQuoteFlag = 0;
+
+   	  			for (comment=0;comment<commentSplits.length;comment++) {
+   	  				var quotations = commentSplits[comment].split("\"")
+   	  				if (quotations.length % 2 === 1) {
+   	  					leadingQuoteFlag = 1
+   	  				}
+   	  				if (leadingQuoteFlag === 1) {
+   	  					lineComment = ";" + commentSplits[comment];
+   	  				}
+   	  			}
+
+   	  		//Remove Comments from expression.
+   	  		lineExpression = lineExpression.replace(lineComment, "");
+   	  		}
+
    	  		var parseResults = mParseLine(lineExpression);
    	  		//console.log("OUTPUT: " + parseResults);
-  	   	 returnCode = returnCode + lineLabel + parseResults + "\r\n";
   	   	}
+  	   	 returnCode = returnCode + lineLabel + parseResults + lineComment + "\r\n";
       }
   	}
    }
