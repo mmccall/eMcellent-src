@@ -1,9 +1,17 @@
 //Requires modules to perform the actual cleaning.
 var rtnSemantics = require('./rtnSemantics.js');
 
-
 //Exports allow access in app.js
 exports.mParse = mParse;
+
+//Beginning array storing list of MUMPS standard commands.
+var arrayRoutines = {
+  'rtnDo': 'DO',
+  'rtnList': 'LIST',
+  'rtnWrite': 'WRITE',
+  'rtnSet': 'SET'
+}
+
 
 
 //Function designed to handle multi-line inputs.
@@ -12,9 +20,11 @@ function mParse (inputCode) {
 //TODO:  Only handling line feeds, may want to expand to Carriage Returns as well.
 var returnCode = "";
 var splitLines = inputCode.split("\r\n");
+var lineNum = null;
 var lineLabel = "";
 var lineExpression = "";
 var lineComment = "";
+var lineIndentation = "";
 
 if (splitLines.length === 1) {
   //Since only 1 line, not considered routine.  Parsing applied without routine considerations.
@@ -36,20 +46,23 @@ if (splitLines.length === 1) {
    	    return returnCode;
    	  } else {
    	  	if (i === 0) {
+          //Never Parse first line.
    	  		lineLabel = splitLines[i];
+          lineNum = i;
    	  		parseResults = "";
    	  	} else {
-   	  		//Extract Line Label, append as start of return code.
+          //Extract Line Number.
+          lineNum = i;
+   	  		//Extract Line Label.
    	  		if (splitLines[i].substring(0,1) === " ") {
-   	  			lineLabel = " ";
+   	  			lineLabel = "";
    	  			lineExpression = splitLines[i].substring(1);
    	  		} else {
    	  			var arrayLabels = splitLines[i].split(" ", 1);
    	  			lineLabel = arrayLabels[0] + " ";
    	  			lineExpression = splitLines[i].substring(lineLabel.length);
    	  		} 
-
-   	  		//Extract Line Expression, append as end of return code.
+   	  		//Extract Line Expression.
    	  		//TODO:  Filter only checks for a leading quote.  Should fix for trailing quote as well.
    	  		if (lineExpression.search(";") >= 0) {
    	  			var commentSplits = lineExpression.split(";");
@@ -57,27 +70,53 @@ if (splitLines.length === 1) {
    	  			var trailingQuoteFlag = 0;
 
    	  			for (comment=0;comment<commentSplits.length;comment++) {
-   	  				var quotations = commentSplits[comment].split("\"")
+   	  				var quotations = commentSplits[comment].split("\"");
    	  				if (quotations.length % 2 === 1) {
-   	  					leadingQuoteFlag = 1
+   	  					leadingQuoteFlag = 1;
    	  				}
    	  				if (leadingQuoteFlag === 1) {
    	  					lineComment = ";" + commentSplits[comment];
    	  				}
    	  			}
-
-   	  		//Remove Comments from expression.
-   	  		lineExpression = lineExpression.replace(lineComment, "");
+   	  		  lineExpression = lineExpression.replace(lineComment, "");
    	  		}
 
+          //Extract Indentation.
+          if (lineExpression.substring(0,1) === ".") {
+            lineIndentation = lineExpression.split(" ", 1)[0];
+            lineExpression = lineExpression.substring(lineIndentation.length);
+            console.log("NEW EXPRESSION:" + lineExpression.substring(lineIndentation.length));
+          }
+
+          //Extract Expressions.
+
+
+          //Assemble into JSON array.
+
+
+
+          //Execute Parsing
    	  		var parseResults = mParseLine(lineExpression);
    	  		//console.log("OUTPUT: " + parseResults);
   	   	}
-  	   	 returnCode = returnCode + lineLabel + parseResults + lineComment + "\r\n";
+
+        console.log("LINE NUMBER: \"" + lineNum + "\"");
+        console.log("LINE LABEL: \"" + lineLabel + "\"");
+        console.log("LINE INDENT: \""  + lineIndentation  + "\"");
+        console.log("LINE RESULTS: \""  + parseResults  + "\"");
+        console.log("LINE COMMENT: \""  + lineComment  + "\"");
+  	   	returnCode = returnCode + lineLabel + lineIndentation + parseResults + lineComment + "\r\n";
+
+         //Wipe used variables.
+         lineLabel = "";
+         lineIndentation = "";
+         parseResults = "";
+         lineComment = "";
+         lineNum = null;
       }
   	}
    }
-   //console.log("FINAL RETURN: " + returnCode);
+  //console.log("FINAL RETURN: " + returnCode);
   return returnCode;
   }
  }
