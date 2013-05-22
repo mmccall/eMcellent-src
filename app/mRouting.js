@@ -25,6 +25,9 @@ var lineLabel = "";
 var lineExpression = "";
 var lineComment = "";
 var lineIndentation = "";
+var lineCommands = [];
+var lineRoutines = [];
+var lineParams = [];
 
 if (splitLines.length === 1) {
   //Since only 1 line, not considered routine.  Parsing applied without routine considerations.
@@ -62,36 +65,48 @@ if (splitLines.length === 1) {
    	  			lineLabel = arrayLabels[0] + " ";
    	  			lineExpression = splitLines[i].substring(lineLabel.length);
    	  		} 
-   	  		//Extract Line Expression.
+   	  		//Extract Line Comments.
    	  		//TODO:  Filter only checks for a leading quote.  Should fix for trailing quote as well.
    	  		if (lineExpression.search(";") >= 0) {
-   	  			var commentSplits = lineExpression.split(";");
-   	  			var leadingQuoteFlag = 0;
-   	  			var trailingQuoteFlag = 0;
-
-   	  			for (comment=0;comment<commentSplits.length;comment++) {
-   	  				var quotations = commentSplits[comment].split("\"");
-   	  				if (quotations.length % 2 === 1) {
-   	  					leadingQuoteFlag = 1;
-   	  				}
-   	  				if (leadingQuoteFlag === 1) {
-   	  					lineComment = ";" + commentSplits[comment];
-   	  				}
-   	  			}
-   	  		  lineExpression = lineExpression.replace(lineComment, "");
-   	  		}
+            for (posComm=0;posComm<lineExpression.length;posComm++) {
+              if (lineExpression[posComm] === ";") {
+                if ((lineExpression.substring(0,posComm).split("\"").length % 2 !== 0) && (lineExpression.substring(posComm).split("\"").length % 2 !== 0)) {
+                lineComment = lineExpression.substring(posComm);
+                lineExpression = lineExpression.replace(lineComment, "");
+              }
+            }
+          }
+   	  	}
 
           //Extract Indentation.
           if (lineExpression.substring(0,1) === ".") {
             lineIndentation = lineExpression.split(" ", 1)[0];
             lineExpression = lineExpression.substring(lineIndentation.length);
-            console.log("NEW EXPRESSION:" + lineExpression.substring(lineIndentation.length));
           }
 
-          //Extract Expressions.
+        //Extract Expressions to array.
+        var prePosLE = 0
+        for(posLE=0;posLE <= lineExpression.length;posLE++) {
+          if (lineExpression[posLE] === " ") {
+            if ((lineExpression.substring(0,posLE).split("\"").length % 2 !== 0) && (lineExpression.substring(posLE).split("\"").length % 2 !== 0)) {
+              lineCommands.push(lineExpression.substring(prePosLE,posLE));
+              prePosLE = posLE + 1;
+            }
+          } else if (posLE === lineExpression.length) {
+              lineCommands.push(lineExpression.substring(prePosLE,posLE));
+              prePosLE = 0;
+          }
+        }
+        
+        //Split array alternating as routines/arguments.
+        for (posLC=0;posLC<lineCommands.length;posLC++) {
+          if (posLC % 2 === 0) {
+            console.log("COMMAND:" + lineCommands[posLC]);
+          } else {
+            console.log("PARAM:" + lineCommands[posLC]);
+          }
 
-
-          //Assemble into JSON array.
+        }
 
 
 
@@ -100,11 +115,11 @@ if (splitLines.length === 1) {
    	  		//console.log("OUTPUT: " + parseResults);
   	   	}
 
-        console.log("LINE NUMBER: \"" + lineNum + "\"");
-        console.log("LINE LABEL: \"" + lineLabel + "\"");
-        console.log("LINE INDENT: \""  + lineIndentation  + "\"");
-        console.log("LINE RESULTS: \""  + parseResults  + "\"");
-        console.log("LINE COMMENT: \""  + lineComment  + "\"");
+        //console.log("LINE NUMBER: \"" + lineNum + "\"");
+        //console.log("LINE LABEL: \"" + lineLabel + "\"");
+        //console.log("LINE INDENT: \""  + lineIndentation  + "\"");
+        //console.log("LINE RESULTS: \""  + parseResults  + "\"");
+        //console.log("LINE COMMENT: \""  + lineComment  + "\"");
   	   	returnCode = returnCode + lineLabel + lineIndentation + parseResults + lineComment + "\r\n";
 
          //Wipe used variables.
@@ -113,6 +128,7 @@ if (splitLines.length === 1) {
          parseResults = "";
          lineComment = "";
          lineNum = null;
+         lineCommands = [];
       }
   	}
    }
