@@ -78,8 +78,8 @@ function findRec (qReq) {
         do
         var temp = 1;
         while(qResponse.mCodeLintFlag === 0)
-        var codeResponse = {codeValue: JSON.stringify(qResponse.mCodeOutput)}
-        console.log(JSON.stringify(codeResponse));
+        var codeResponse = {codeValue: (qResponse.mCodeOutput)}
+        //console.log(JSON.stringify(codeResponse));
         var codeInput = {codeValue: qResponse.mCode}
       res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput});
   });
