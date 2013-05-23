@@ -58,6 +58,7 @@ function saveRec (qReq) {
     if (!err) {
       console.log('Post Saved');
       var mCodeOutput = mRouting.mParse(req.body.inputCode);
+      //console.log(mCodeOutput);
       mCodePost.update({mCodeLintFlag: 1, mCodeOutput: mCodeOutput}, function (err, numberAffected, raw) {
         if (err) return err;
         console.log('The number of updated documents was %d', numberAffected);
@@ -79,7 +80,6 @@ function findRec (qReq) {
         var temp = 1;
         while(qResponse.mCodeLintFlag === 0)
         var codeResponse = {codeValue: (qResponse.mCodeOutput)}
-        //console.log(JSON.stringify(codeResponse));
         var codeInput = {codeValue: qResponse.mCode}
       res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput});
   });

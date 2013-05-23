@@ -1,5 +1,5 @@
 //Requires modules to perform the actual cleaning.
-var rtnSemantics = require('./rtnSemantics.js');
+var mScrubbing = require('./mScrubbing.js');
 
 //Exports allow access in app.js
 exports.mParse = mParse;
@@ -7,8 +7,10 @@ exports.mParse = mParse;
 //This function deconstructs the text-based input into a JSON Array.
 function mParse (inputCode) {
   //Count the lines and iterate each one.
+  var returnArray = [];
   var returnCode = {};
   var splitLines = inputCode.split("\r\n");
+  var returnCommArray = [];
 
   //Instantiate all variables.
   var lineNum = null;
@@ -106,22 +108,24 @@ function mParse (inputCode) {
     if (lineComment !== "") {lineJSON["lineComment"] = lineComment};
 
     if (lineCommandArray) {
-      for (posJSON=0;posJSON<lineCommandArray.length;posJSON++) {
-      lineJSON["command" + posJSON] = {};
+      for (posJSON=0;posJSON<lineCommandArray.length;posJSON++) {  
+      var commJSON = {};
+      commJSON["commandNumber"] = posJSON;
         for (posJSON1=0;posJSON1<lineCommandArray[posJSON].length;posJSON1++) {
           if (posJSON1 === 0) {
-          lineJSON["command" + posJSON]["function"] = lineCommandArray[posJSON][posJSON1];
+          commJSON["function"] = lineCommandArray[posJSON][posJSON1];
           } else if (posJSON1 === 1) {
-          lineJSON["command" + posJSON]["parameters"] = lineCommandArray[posJSON][posJSON1];
+          commJSON["parameters"] = lineCommandArray[posJSON][posJSON1];
           } else if (posJSON1 === 2) {
-          lineJSON["command" + posJSON]["postConditionals"] = lineCommandArray[posJSON][posJSON1];
+          commJSON["postConditionals"] = lineCommandArray[posJSON][posJSON1];
           }
         }
+      returnCommArray.push(commJSON);
       }
     }
 
-  returnCode['line' + i] = lineJSON;
-  //returnCode = returnCode + lineLabel + lineIndentation + lineExpression + lineComment + "\r\n";
+  lineJSON["commands"] = returnCommArray;
+  returnArray.push(lineJSON);
 
   //Wipe used variables.
   lineLabel = "";
@@ -130,8 +134,16 @@ function mParse (inputCode) {
   lineComment = "";
   lineNum = null;
   lineCommands = [];
+  returnCommArray = [];
 
   }
+  //Function Level descriptors.
+  returnCode["mCode"] = returnArray;
+  //console.log(returnCode);
+  //Perform Scrubbing on JSON Object.
+  returnCode = mScrubbing.deTerse(returnCode);
+
+
   //console.log("FINAL RETURN: " + returnCode);
   return returnCode;
 }
