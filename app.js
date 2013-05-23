@@ -23,7 +23,7 @@ var conn = mongoose.connect('mongodb://localhost/mdb', function(err) {
 /* Mongo Schema and Code Declaration */
 var mSchema = new mongoose.Schema ({
   mCode: String,
-  mCodeOutput: String,
+  mCodeOutput: Object,
   mCodeLintFlag: Number
 });
 
@@ -62,7 +62,7 @@ function saveRec (qReq) {
         if (err) return err;
         console.log('The number of updated documents was %d', numberAffected);
         console.log('The raw response from Mongo was ', raw);
-              findRec({mCode: req.body.inputCode});
+        findRec({mCode: req.body.inputCode});
       });
     } else {
       throw err;
@@ -78,10 +78,10 @@ function findRec (qReq) {
         do
         var temp = 1;
         while(qResponse.mCodeLintFlag === 0)
-        var codeResponse = {codeValue: qResponse.mCodeOutput}
+        var codeResponse = {codeValue: JSON.stringify(qResponse.mCodeOutput)}
+        console.log(JSON.stringify(codeResponse));
         var codeInput = {codeValue: qResponse.mCode}
       res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput});
-
   });
 }
 

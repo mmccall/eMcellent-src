@@ -7,7 +7,7 @@ exports.mParse = mParse;
 //This function deconstructs the text-based input into a JSON Array.
 function mParse (inputCode) {
   //Count the lines and iterate each one.
-  var returnCode = "";
+  var returnCode = {};
   var splitLines = inputCode.split("\r\n");
 
   //Instantiate all variables.
@@ -120,30 +120,18 @@ function mParse (inputCode) {
       }
     }
 
-    //Uncomment to review parsing.
-    console.log(lineJSON);
+  returnCode['line' + i] = lineJSON;
+  //returnCode = returnCode + lineLabel + lineIndentation + lineExpression + lineComment + "\r\n";
 
-
-  	   	returnCode = returnCode + lineLabel + lineIndentation + lineExpression + lineComment + "\r\n";
-
-         //Wipe used variables.
-         lineLabel = "";
-         lineIndentation = "";
-         parseResults = "";
-         lineComment = "";
-         lineNum = null;
-         lineCommands = [];
+  //Wipe used variables.
+  lineLabel = "";
+  lineIndentation = "";
+  parseResults = "";
+  lineComment = "";
+  lineNum = null;
+  lineCommands = [];
 
   }
   //console.log("FINAL RETURN: " + returnCode);
   return returnCode;
-}
-
-
-//Function designed to handle single lines driven from mParse.
-function mParseLine (inputCode) {
-
-	var inputCode = rtnSemantics.deTerse(inputCode, 'WRITE');
-
-return inputCode;
 }
