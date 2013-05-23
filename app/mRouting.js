@@ -4,123 +4,127 @@ var rtnSemantics = require('./rtnSemantics.js');
 //Exports allow access in app.js
 exports.mParse = mParse;
 
-//Beginning array storing list of MUMPS standard commands.
-var arrayRoutines = {
-  'rtnDo': 'DO',
-  'rtnList': 'LIST',
-  'rtnWrite': 'WRITE',
-  'rtnSet': 'SET'
-}
-
-
-
-//Function designed to handle multi-line inputs.
+//This function deconstructs the text-based input into a JSON Array.
 function mParse (inputCode) {
-//Count the lines and iterate each one.
-//TODO:  Only handling line feeds, may want to expand to Carriage Returns as well.
-var returnCode = "";
-var splitLines = inputCode.split("\r\n");
-var lineNum = null;
-var lineLabel = "";
-var lineExpression = "";
-var lineComment = "";
-var lineIndentation = "";
-var lineCommands = [];
-var lineRoutines = [];
-var lineParams = [];
+  //Count the lines and iterate each one.
+  var returnCode = "";
+  var splitLines = inputCode.split("\r\n");
 
-if (splitLines.length === 1) {
-  //Since only 1 line, not considered routine.  Parsing applied without routine considerations.
-  	console.log(splitLines[0]);
-    var inputCode = mParseLine(splitLines[0]);
-    console.log(inputCode);
-    return inputCode;
-} else {
+  //Instantiate all variables.
+  var lineNum = null;
+  var lineLabel = "";
+  var lineExpression = "";
+  var lineComment = "";
+  var lineIndentation = "";
+  var lineCommands = [];
+  var lineRoutines = [];
+  var lineParams = [];
+  var linePostConditional = "";
+
   //Walk each line.
   for (i=0;i<splitLines.length;i++) {
-  	//Ignore every comment line.
-  	if (splitLines[i].substring(0,1) === ";") {
-  		console.log("Comment on line " + i + " ignored.")
-     	returnCode = returnCode + splitLines[i] + "\r\n";
-  	} else {
-  		//If 1st letter is space, something is amiss, since no routine starts with a space.
-  	  if (splitLines[i].substring(0,1) === " " && i === 0) {
-		returnCode="INVALID ROUTINE: LEADING SPACE IN ROUTINE TITLE."
-   	    return returnCode;
-   	  } else {
-   	  	if (i === 0) {
-          //Never Parse first line.
-   	  		lineLabel = splitLines[i];
-          lineNum = i;
-   	  		parseResults = "";
-   	  	} else {
-          //Extract Line Number.
-          lineNum = i;
-   	  		//Extract Line Label.
-   	  		if (splitLines[i].substring(0,1) === " ") {
-   	  			lineLabel = "";
-   	  			lineExpression = splitLines[i].substring(1);
-   	  		} else {
-   	  			var arrayLabels = splitLines[i].split(" ", 1);
-   	  			lineLabel = arrayLabels[0] + " ";
-   	  			lineExpression = splitLines[i].substring(lineLabel.length);
-   	  		} 
-   	  		//Extract Line Comments.
-   	  		//TODO:  Filter only checks for a leading quote.  Should fix for trailing quote as well.
-   	  		if (lineExpression.search(";") >= 0) {
-            for (posComm=0;posComm<lineExpression.length;posComm++) {
-              if (lineExpression[posComm] === ";") {
-                if ((lineExpression.substring(0,posComm).split("\"").length % 2 !== 0) && (lineExpression.substring(posComm).split("\"").length % 2 !== 0)) {
-                lineComment = lineExpression.substring(posComm);
-                lineExpression = lineExpression.replace(lineComment, "");
-              }
-            }
-          }
-   	  	}
+    //Extract Line Number.
+    lineNum = i;
 
-          //Extract Indentation.
-          if (lineExpression.substring(0,1) === ".") {
-            lineIndentation = lineExpression.split(" ", 1)[0];
-            lineExpression = lineExpression.substring(lineIndentation.length);
-          }
+    //Extract Line Label.
+    if (splitLines[i].substring(0,1) === " ") {
+    lineLabel = "";
+    lineExpression = splitLines[i].substring(1);
+    } else {
+     var arrayLabels = splitLines[i].split(" ", 1);
+     lineLabel = arrayLabels[0] + " ";
+     lineExpression = splitLines[i].substring(lineLabel.length);
+    }
 
-        //Extract Expressions to array.
-        var prePosLE = 0
-        for(posLE=0;posLE <= lineExpression.length;posLE++) {
-          if (lineExpression[posLE] === " ") {
-            if ((lineExpression.substring(0,posLE).split("\"").length % 2 !== 0) && (lineExpression.substring(posLE).split("\"").length % 2 !== 0)) {
-              lineCommands.push(lineExpression.substring(prePosLE,posLE));
-              prePosLE = posLE + 1;
-            }
-          } else if (posLE === lineExpression.length) {
-              lineCommands.push(lineExpression.substring(prePosLE,posLE));
-              prePosLE = 0;
+    //Extract Line Comments.
+    if (lineExpression.search(";") >= 0) {
+      for (posComm=0;posComm<lineExpression.length;posComm++) {
+        if (lineExpression[posComm] === ";") {
+          if ((lineExpression.substring(0,posComm).split("\"").length % 2 !== 0) && (lineExpression.substring(posComm).split("\"").length % 2 !== 0)) {
+          lineComment = lineExpression.substring(posComm);
+          lineExpression = lineExpression.replace(lineComment, "");
           }
         }
-        
-        //Split array alternating as routines/arguments.
-        for (posLC=0;posLC<lineCommands.length;posLC++) {
-          if (posLC % 2 === 0) {
-            console.log("COMMAND:" + lineCommands[posLC]);
-          } else {
-            console.log("PARAM:" + lineCommands[posLC]);
-          }
+      }
+    }
 
+    //Extract Indentation.
+    if (lineExpression.substring(0,1) === ".") {
+    lineIndentation = lineExpression.split(" ", 1)[0];
+    lineExpression = lineExpression.substring(lineIndentation.length + 1);
+    lineIndentation = lineIndentation.length;
+    } else {
+      lineIndentation = 0;
+    }
+
+    //Extract Expressions to array.
+    var prePosLE = 0
+    for(posLE=0;posLE <= lineExpression.length;posLE++) { 
+      if (lineExpression[posLE] === " ") {
+        if ((lineExpression.substring(0,posLE).split("\"").length % 2 !== 0) && (lineExpression.substring(posLE).split("\"").length % 2 !== 0)) {
+        lineCommands.push(lineExpression.substring(prePosLE,posLE));
+        prePosLE = posLE + 1;
         }
+      } else if (posLE === lineExpression.length) {
+      lineCommands.push(lineExpression.substring(prePosLE,posLE));
+      prePosLE = 0;
+      }
+    }
+    //Extract Routines & Arguments.
+    var lineCommandArray = [];
+    var lineFuncArray = [];
+    for (posLC=0;posLC<lineCommands.length;posLC++) {
+      if (posLC % 2 === 0) {
+      lineFuncArray.push(lineCommands[posLC]);
+      } else {
+      lineFuncArray.push(lineCommands[posLC]);
+      lineCommandArray.push(lineFuncArray);
+      lineFuncArray = [];
+      }
+      //Last command doesn't always require parameter, so if Odd Number of Pairs, push it.
+      if (lineCommands.length % 2 !== 0 && lineCommands.length > 0 && posLC === (lineCommands.length - 1)) {
+      lineCommandArray.push(lineFuncArray);
+      lineFuncArray = [];
+      }
+    }
+
+    //Extract PostConditionals from functions.        
+    for (posPC=0;posPC<lineCommandArray.length;posPC++) {
+      if (lineCommandArray[posPC][0].match(":") !== null) {
+      linePostConditional = lineCommandArray[posPC][0].substring(lineCommandArray[posPC][0].split(":")[0].length + 1);
+      lineCommandArray[posPC][0] = lineCommandArray[posPC][0].split(":")[0];
+      lineCommandArray[posPC].push(linePostConditional);
+      }
+    }
+
+    var lineJSON = {
+    "lineNumber": lineNum,
+    "lineIndentation": lineIndentation,
+    }
+
+    if (lineLabel !== "") {lineJSON["lineLabel"] = lineLabel};
+    if (lineComment !== "") {lineJSON["lineComment"] = lineComment};
+
+    if (lineCommandArray) {
+      for (posJSON=0;posJSON<lineCommandArray.length;posJSON++) {
+      lineJSON["command" + posJSON] = {};
+        for (posJSON1=0;posJSON1<lineCommandArray[posJSON].length;posJSON1++) {
+          if (posJSON1 === 0) {
+          lineJSON["command" + posJSON]["function"] = lineCommandArray[posJSON][posJSON1];
+          } else if (posJSON1 === 1) {
+          lineJSON["command" + posJSON]["parameters"] = lineCommandArray[posJSON][posJSON1];
+          } else if (posJSON1 === 2) {
+          lineJSON["command" + posJSON]["postConditionals"] = lineCommandArray[posJSON][posJSON1];
+          }
+        }
+      }
+    }
+
+    //Uncomment to review parsing.
+    console.log(lineJSON);
 
 
-
-          //Execute Parsing
-   	  		var parseResults = mParseLine(lineExpression);
-   	  		//console.log("OUTPUT: " + parseResults);
-  	   	}
-
-        //console.log("LINE NUMBER: \"" + lineNum + "\"");
-        //console.log("LINE LABEL: \"" + lineLabel + "\"");
-        //console.log("LINE INDENT: \""  + lineIndentation  + "\"");
-        //console.log("LINE RESULTS: \""  + parseResults  + "\"");
-        //console.log("LINE COMMENT: \""  + lineComment  + "\"");
-  	   	returnCode = returnCode + lineLabel + lineIndentation + parseResults + lineComment + "\r\n";
+  	   	returnCode = returnCode + lineLabel + lineIndentation + lineExpression + lineComment + "\r\n";
 
          //Wipe used variables.
          lineLabel = "";
@@ -129,13 +133,11 @@ if (splitLines.length === 1) {
          lineComment = "";
          lineNum = null;
          lineCommands = [];
-      }
-  	}
-   }
+
+  }
   //console.log("FINAL RETURN: " + returnCode);
   return returnCode;
-  }
- }
+}
 
 
 //Function designed to handle single lines driven from mParse.
