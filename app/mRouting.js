@@ -50,7 +50,7 @@ function mParse (inputCode) {
     lineExpression = splitLines[i].substring(1);
     } else {
      var arrayLabels = splitLines[i].split(" ", 1);
-     lineLabel = arrayLabels[0] + " ";
+     lineLabel = arrayLabels[0];
      lineExpression = splitLines[i].substring(lineLabel.length);
     }
 
@@ -61,6 +61,7 @@ function mParse (inputCode) {
           if ((lineExpression.substring(0,posComm).split("\"").length % 2 !== 0) && (lineExpression.substring(posComm).split("\"").length % 2 !== 0)) {
           lineComment = lineExpression.substring(posComm);
           lineExpression = lineExpression.replace(lineComment, "");
+          lineComment = lineComment.substring(1);
           }
         }
       }
