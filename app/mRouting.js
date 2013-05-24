@@ -79,7 +79,6 @@ function mParse (inputCode) {
     //Extract Expressions to array.
     var prePosLE = 0
     for(posLE=0;posLE <= lineExpression.length;posLE++) { 
-      console.log(lineExpression.length);
       if (lineExpression[posLE] === " ") {
         if ((lineExpression.substring(0,posLE).split("\"").length % 2 !== 0) && (lineExpression.substring(posLE).split("\"").length % 2 !== 0)) {
         if (lineExpression.substring(prePosLE,posLE).length > 0) {lineCommands.push(lineExpression.substring(prePosLE,posLE))};
@@ -133,7 +132,7 @@ function mParse (inputCode) {
           if (posJSON1 === 0) {
           commJSON["function"] = lineCommandArray[posJSON][posJSON1];
           } else if (posJSON1 === 1) {
-          commJSON["parameters"] = lineCommandArray[posJSON][posJSON1];
+          commJSON["parameterString"] = lineCommandArray[posJSON][posJSON1];
           } else if (posJSON1 === 2) {
           commJSON["postConditionals"] = lineCommandArray[posJSON][posJSON1];
           }
@@ -160,6 +159,7 @@ function mParse (inputCode) {
   //console.log(returnCode);
   //Perform Scrubbing on JSON Object.
   returnCode = mScrubbing.deTerse(returnCode);
+  returnCode = mScrubbing.fnSET(returnCode);
 
 
   //console.log("FINAL RETURN: " + returnCode);
