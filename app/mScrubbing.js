@@ -23,17 +23,14 @@ var arrayCommands = ['BREAK', 'CLOSE', 'DO', 'ELSE', 'FOR', 'GOTO', 'HALT', 'HAN
 //Listing of full name of intrinsic functions, with the exception of $Z.  Will be handled otherwise.
 var arrayIntrinsicFunctions = ['$ASCII', '$CHAR', '$DATA', '$EXTRACT', '$FIND', '$FNUMBER', '$GET', '$JUSTIFY', '$LENGTH', '$NAME', '$ORDER', '$PIECE', '$QLENGTH', '$QSUBSCRIPT', '$QUERY', '$RANDOM', '$REVERSE', '$SELECT', '$STACK', '$TEXT', '$TRANSLATE', '$VIEW'];
 
-for (var i in inputJSON.mCode) {
-  for (var ii in inputJSON.mCode[i].commands) {
-    for (iii=0;iii<arrayCommands.length;iii++) {
-      //console.log(inputJSON.mCode[i].commands[ii].function)
-      //console.log(arrayFunctions[iii]);
-      if (arrayCommands[iii].substring(0,inputJSON.mCode[i].commands[ii].function.length) === inputJSON.mCode[i].commands[ii].function) {
-        inputJSON.mCode[i].commands[ii]["functionFullName"] = arrayCommands[iii];
+  for (var i in inputJSON.mCode) {
+    for (var ii in inputJSON.mCode[i].commands) {
+      for (iii=0;iii<arrayCommands.length;iii++) {
+        if ((arrayCommands[iii].substring(0,inputJSON.mCode[i].commands[ii].function.length) === inputJSON.mCode[i].commands[ii].function) && arrayCommands[iii].substring(0,inputJSON.mCode[i].commands[ii].function.length).length > 0) {
+          inputJSON.mCode[i].commands[ii]["functionFullName"] = arrayCommands[iii];
+        }
       }
     }
   }
-}
-
 return inputJSON;
 }
