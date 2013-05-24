@@ -79,13 +79,14 @@ function mParse (inputCode) {
     //Extract Expressions to array.
     var prePosLE = 0
     for(posLE=0;posLE <= lineExpression.length;posLE++) { 
+      console.log(lineExpression.length);
       if (lineExpression[posLE] === " ") {
         if ((lineExpression.substring(0,posLE).split("\"").length % 2 !== 0) && (lineExpression.substring(posLE).split("\"").length % 2 !== 0)) {
-        lineCommands.push(lineExpression.substring(prePosLE,posLE));
+        if (lineExpression.substring(prePosLE,posLE).length > 0) {lineCommands.push(lineExpression.substring(prePosLE,posLE))};
         prePosLE = posLE + 1;
         }
       } else if (posLE === lineExpression.length) {
-      lineCommands.push(lineExpression.substring(prePosLE,posLE));
+      if (lineExpression.substring(prePosLE,posLE).length > 0) {lineCommands.push(lineExpression.substring(prePosLE,posLE))};
       prePosLE = 0;
       }
     }
@@ -141,7 +142,7 @@ function mParse (inputCode) {
       }
     }
 
-  lineJSON["commands"] = returnCommArray;
+  if(returnCommArray.length > 0) {lineJSON["commands"] = returnCommArray};
   returnArray.push(lineJSON);
 
   //Wipe used variables.
