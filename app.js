@@ -96,6 +96,8 @@ function findRec (qReq) {
         while(qResponse.mCodeLintFlag === 0)
         var codeResponse = {codeValue: (qResponse.mCodeOutput)}
         var codeInput = {codeValue: qResponse.mCode}
+        //Added for testing, may want to remove in production.
+        mModel.collection.drop();
       res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput});
   });
 }

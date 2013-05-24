@@ -19,16 +19,17 @@ exports.deTerse = deTerse;
 function deTerse (inputJSON) {
 
 //Listing of full name of all MUMPS Commands.
-var arrayFunctions = ['BREAK', 'CLOSE', 'DO', 'ELSE', 'FOR', 'GOTO', 'HALT', 'HANG', 'IF', 'JOB', 'KILL', 'LOCK', 'MERGE', 'NEW', 'OPEN', 'QUIT', 'READ', 'SET', 'TCOMMIT', 'TRESTART', 'TROLLBACK', 'TSTART', 'USE', 'VIEW', 'WRITE', 'XECUTE'];
-
+var arrayCommands = ['BREAK', 'CLOSE', 'DO', 'ELSE', 'FOR', 'GOTO', 'HALT', 'HANG', 'IF', 'JOB', 'KILL', 'LOCK', 'MERGE', 'NEW', 'OPEN', 'QUIT', 'READ', 'SET', 'TCOMMIT', 'TRESTART', 'TROLLBACK', 'TSTART', 'USE', 'VIEW', 'WRITE', 'XECUTE'];
+//Listing of full name of intrinsic functions, with the exception of $Z.  Will be handled otherwise.
+var arrayIntrinsicFunctions = ['$ASCII', '$CHAR', '$DATA', '$EXTRACT', '$FIND', '$FNUMBER', '$GET', '$JUSTIFY', '$LENGTH', '$NAME', '$ORDER', '$PIECE', '$QLENGTH', '$QSUBSCRIPT', '$QUERY', '$RANDOM', '$REVERSE', '$SELECT', '$STACK', '$TEXT', '$TRANSLATE', '$VIEW'];
 
 for (var i in inputJSON.mCode) {
   for (var ii in inputJSON.mCode[i].commands) {
-    for (iii=0;iii<arrayFunctions.length;iii++) {
+    for (iii=0;iii<arrayCommands.length;iii++) {
       //console.log(inputJSON.mCode[i].commands[ii].function)
       //console.log(arrayFunctions[iii]);
-      if (arrayFunctions[iii].substring(0,inputJSON.mCode[i].commands[ii].function.length) === inputJSON.mCode[i].commands[ii].function) {
-        inputJSON.mCode[i].commands[ii]["functionFullName"] = arrayFunctions[iii];
+      if (arrayCommands[iii].substring(0,inputJSON.mCode[i].commands[ii].function.length) === inputJSON.mCode[i].commands[ii].function) {
+        inputJSON.mCode[i].commands[ii]["functionFullName"] = arrayCommands[iii];
       }
     }
   }
