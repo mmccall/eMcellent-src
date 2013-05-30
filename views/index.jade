@@ -11,5 +11,12 @@ block content
         br
         input.btn.btn-danger.btn-large(type="submit", value="Detersificate!")
         br
-      pre#codeOutput.prettyprint= JSON.stringify(codeResponse.codeValue, null, ' ')
+      ul#outputTabs.nav.nav-pills
+        li.active
+          a(href="#MUMPS", data-toggle="pill") M/MUMPS
+        li
+          a(href="#JSON", data-toggle="pill") JSON
+      div.tab-content
+        pre#JSON.codeOutput.prettyprint.tab-pane= JSON.stringify(codeResponse.codeValue, null, ' ')
+        pre#MUMPS.codeOutput.prettyprint.tab-pane.active OUTPUT HERE
       br

@@ -31,7 +31,7 @@ html, body {
 	font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
 }
 
-#codeOutput {
+.codeOutput {
 	min-height: 100px;
 	text-align:left;
 	padding: 4px 6px;
@@ -42,3 +42,17 @@ html, body {
 	background-color: black;
 	height: 100%;	
 }
+
+#outputTabs {
+	margin: 10px auto;
+	max-width: 420px;
+}
+
+#outputTabs li {
+	width: 200px;
+	margin: 0 5px;
+}
+/*
+#JSON, #MUMPS {
+	padding: 4px 6px;
+}*/
