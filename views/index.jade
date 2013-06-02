@@ -18,5 +18,5 @@ block content
           a(href="#JSON", data-toggle="pill") JSON
       div.tab-content
         pre#JSON.codeOutput.prettyprint.tab-pane= JSON.stringify(codeResponse.codeValue, null, ' ')
-        pre#MUMPS.codeOutput.prettyprint.tab-pane.active OUTPUT HERE
+        pre#MUMPS.codeOutput.tab-pane.active!= codeMUMPS
       br

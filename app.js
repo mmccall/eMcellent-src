@@ -22,6 +22,10 @@ var express = require('express')
 /* M Parsing Package Dependencies. */
 var mRouting = require('./app/mRouting.js');
 
+/* M Render Depency. */
+/* TODO:  Ideally should be client side, will require Jade overhaul. */
+var mRender = require('./app/mRender.js');
+
 /* Persistence dependencies */
 var mongoose = require('mongoose');
 
@@ -96,9 +100,11 @@ function findRec (qReq) {
         while(qResponse.mCodeLintFlag === 0)
         var codeResponse = {codeValue: (qResponse.mCodeOutput)}
         var codeInput = {codeValue: qResponse.mCode}
+        var codeMUMPS = mRender.mRender(codeResponse.codeValue);
+        console.log(codeMUMPS);
         //Added for testing, may want to remove in production.
         mModel.collection.drop();
-      res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput});
+      res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput, codeMUMPS:codeMUMPS});
   });
 }
 
@@ -110,7 +116,8 @@ saveRec();
 app.get('/', function(req, res) {
   var codeInput = {codeValue:"W HELLO WORLD!"}
   var codeResponse = {codeValue:"OUTPUT HERE"}
-  res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput});
+  var codeMUMPS = mRender.mRender(codeResponse.codeValue);
+  res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput, codeMUMPS:codeMUMPS});
 });
 
 //Server Instantiation.
