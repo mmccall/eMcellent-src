@@ -101,7 +101,7 @@ function findRec (qReq) {
         var codeResponse = {codeValue: (qResponse.mCodeOutput)}
         var codeInput = {codeValue: qResponse.mCode}
         var codeMUMPS = mRender.mRender(codeResponse.codeValue);
-        console.log(codeMUMPS);
+        //console.log(codeMUMPS);
         //Added for testing, may want to remove in production.
         mModel.collection.drop();
       res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput, codeMUMPS:codeMUMPS});

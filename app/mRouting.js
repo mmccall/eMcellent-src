@@ -130,7 +130,7 @@ function mParse (inputCode) {
       commJSON["commandNumber"] = posJSON;
         for (posJSON1=0;posJSON1<lineCommandArray[posJSON].length;posJSON1++) {
           if (posJSON1 === 0) {
-          commJSON["function"] = lineCommandArray[posJSON][posJSON1];
+          commJSON["command"] = lineCommandArray[posJSON][posJSON1];
           } else if (posJSON1 === 1) {
           commJSON["parameterString"] = lineCommandArray[posJSON][posJSON1];
           } else if (posJSON1 === 2) {

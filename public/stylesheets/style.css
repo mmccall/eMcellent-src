@@ -52,7 +52,33 @@ html, body {
 	width: 200px;
 	margin: 0 5px;
 }
-/*
-#JSON, #MUMPS {
-	padding: 4px 6px;
-}*/
+
+/* Output MUMPS specific Styling */
+
+.lineLabel {
+	color: blue;
+}
+
+.lineComment {
+	color: grey;
+}
+
+.lineCommand {
+	color: red;
+}
+
+.popover-inner {
+	width: 900px;
+}
+
+.lineIndentation {
+	color: black;
+}
+
+.lineParameters {
+	color: orange;
+}
+
+.linePostConditionals {
+	color: purple;
+}

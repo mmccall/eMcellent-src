@@ -20,3 +20,10 @@ block content
         pre#JSON.codeOutput.prettyprint.tab-pane= JSON.stringify(codeResponse.codeValue, null, ' ')
         pre#MUMPS.codeOutput.tab-pane.active!= codeMUMPS
       br
+  script
+    $(".lineLabel").tooltip()
+    $(".lineComment").tooltip()
+    $(".lineIndentation").tooltip()
+    $(".lineCommand").popover()
+    $(".lineParameters").tooltip()
+    $(".linePostConditionals").tooltip()
