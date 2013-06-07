@@ -81,10 +81,12 @@ function mParse (inputCode) {
     for(posLE=0;posLE <= lineExpression.length;posLE++) { 
       if (lineExpression[posLE] === " ") {
         if ((lineExpression.substring(0,posLE).split("\"").length % 2 !== 0) && (lineExpression.substring(posLE).split("\"").length % 2 !== 0)) {
-        console.log(lineExpression.substring(0,posLE));
-        //Fix goes here for empty parsing error.
-        if (lineExpression.substring(prePosLE,posLE).length > 0 || (lineExpression.substring(prePosLE,posLE).length === 0 && lineExpression.substring(prePosLE -1, posLE -1))) {lineCommands.push(lineExpression.substring(prePosLE,posLE))};
-        prePosLE = posLE + 1;
+          if (lineExpression.substring(prePosLE,posLE).length > 0) {
+            lineCommands.push(lineExpression.substring(prePosLE,posLE));
+          } else if (lineExpression.substring(prePosLE,posLE).length === 0 && lineExpression.substring(prePosLE - 1, prePosLE) === " ") {
+            lineCommands.push(lineExpression.substring(prePosLE,posLE));
+          }
+          prePosLE = posLE + 1;
         }
       } else if (posLE === lineExpression.length) {
       if (lineExpression.substring(prePosLE,posLE).length > 0) {lineCommands.push(lineExpression.substring(prePosLE,posLE))};
@@ -109,7 +111,6 @@ function mParse (inputCode) {
       lineFuncArray = [];
       }
     }
-
     //Extract PostConditionals from functions.        
     for (posPC=0;posPC<lineCommandArray.length;posPC++) {
       if (lineCommandArray[posPC][0].match(":") !== null) {
@@ -134,7 +135,7 @@ function mParse (inputCode) {
         for (posJSON1=0;posJSON1<lineCommandArray[posJSON].length;posJSON1++) {
           if (posJSON1 === 0) {
           commJSON["command"] = lineCommandArray[posJSON][posJSON1];
-          } else if (posJSON1 === 1 && lineCommandArray[posJSON][posJSON1]) {
+          } else if (posJSON1 === 1) {
           commJSON["parameterString"] = lineCommandArray[posJSON][posJSON1];
           } else if (posJSON1 === 2) {
           commJSON["postConditionals"] = lineCommandArray[posJSON][posJSON1];

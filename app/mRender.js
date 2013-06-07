@@ -49,7 +49,7 @@ function mRender (inputJSON) {
 			for (var ii in inputJSON.mCode[i].commands) {	
 
 				//Handle Command Parameters.
-				if (inputJSON.mCode[i].commands[ii].parameterString) {
+				if (inputJSON.mCode[i].commands[ii].parameterString !== null && inputJSON.mCode[i].commands[ii].parameterString !== undefined) {
 					outputHTMLLineCommandParameters = "<a class=\"lineParameters\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"Parameters\">" + inputJSON.mCode[i].commands[ii].parameterString + "</a>";
 				}
 
