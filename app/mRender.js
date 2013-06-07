@@ -59,8 +59,15 @@ function mRender (inputJSON) {
 				}
 
 			outputHTMLLineCommand = "<a class=\"lineCommand\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"<span class='lead'> Command: " + inputJSON.mCode[i].commands[ii].commandFullName + "</span>\" data-html=true data-content=\"Syntax:<pre>" + inputJSON.mCode[i].commands[ii].commandSyntax + "</pre></br><p>" + inputJSON.mCode[i].commands[ii].commandDescription + "</p>\">" + inputJSON.mCode[i].commands[ii].command + "</a>";
-			outputHTMLLineCommand = outputHTMLLineCommand + " " + outputHTMLLineCommandParameters + outputHTMLLineCommandPostConditionals;
+			
+			if (outputHTMLLineCommandParameters) {
+				outputHTMLLineCommand = outputHTMLLineCommand + outputHTMLLineCommandPostConditionals + " " + outputHTMLLineCommandParameters;
+			} else {
+				outputHTMLLineCommand = outputHTMLLineCommand + outputHTMLLineCommandPostConditionals;
+			}
 			outputHTMLLine = outputHTMLLine + " " + outputHTMLLineCommand;
+			outputHTMLLineCommandParameters = "";
+			outputHTMLLineCommandPostConditionals = "";
 			}
 		} 
 

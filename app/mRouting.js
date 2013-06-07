@@ -81,7 +81,9 @@ function mParse (inputCode) {
     for(posLE=0;posLE <= lineExpression.length;posLE++) { 
       if (lineExpression[posLE] === " ") {
         if ((lineExpression.substring(0,posLE).split("\"").length % 2 !== 0) && (lineExpression.substring(posLE).split("\"").length % 2 !== 0)) {
-        if (lineExpression.substring(prePosLE,posLE).length > 0) {lineCommands.push(lineExpression.substring(prePosLE,posLE))};
+        console.log(lineExpression.substring(0,posLE));
+        //Fix goes here for empty parsing error.
+        if (lineExpression.substring(prePosLE,posLE).length > 0 || (lineExpression.substring(prePosLE,posLE).length === 0 && lineExpression.substring(prePosLE -1, posLE -1))) {lineCommands.push(lineExpression.substring(prePosLE,posLE))};
         prePosLE = posLE + 1;
         }
       } else if (posLE === lineExpression.length) {
@@ -89,6 +91,7 @@ function mParse (inputCode) {
       prePosLE = 0;
       }
     }
+
     //Extract Routines & Arguments.
     var lineCommandArray = [];
     var lineFuncArray = [];
@@ -112,7 +115,7 @@ function mParse (inputCode) {
       if (lineCommandArray[posPC][0].match(":") !== null) {
       linePostConditional = lineCommandArray[posPC][0].substring(lineCommandArray[posPC][0].split(":")[0].length + 1);
       lineCommandArray[posPC][0] = lineCommandArray[posPC][0].split(":")[0];
-      lineCommandArray[posPC].push(linePostConditional);
+      lineCommandArray[posPC][2] = linePostConditional;
       }
     }
 
@@ -131,7 +134,7 @@ function mParse (inputCode) {
         for (posJSON1=0;posJSON1<lineCommandArray[posJSON].length;posJSON1++) {
           if (posJSON1 === 0) {
           commJSON["command"] = lineCommandArray[posJSON][posJSON1];
-          } else if (posJSON1 === 1) {
+          } else if (posJSON1 === 1 && lineCommandArray[posJSON][posJSON1]) {
           commJSON["parameterString"] = lineCommandArray[posJSON][posJSON1];
           } else if (posJSON1 === 2) {
           commJSON["postConditionals"] = lineCommandArray[posJSON][posJSON1];

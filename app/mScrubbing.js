@@ -47,7 +47,6 @@ var arrayCommands = [
       {commandFullName:'WRITE', commandSyntax: 'WRITE:Postconditional Argument', commandDescription: 'Formats and outputs values to the current i/o device. When an argument includes an asterisk followed by an integer value, one character whose code (not necessarily ascii) is the number represented by the integer is sent to the current device; the effect this code has on the device is implementation-specific.'},
       {commandFullName:'XECUTE', commandSyntax: 'XECUTE:Postconditional Expression:Postcondition', commandDescription: 'Interprets and executes a value as mumps text. Xecute provides a means of interpreting a data value created during program execution as if it were mumps code. Each argument of the xecute command is interpreted as if it were the text part of a line of mumps code (without label, line start indicator, or line level indicator).'}
 ]
-console.log(arrayCommands);
 //Listing of full name of all MUMPS Commands.
 //'READ', 'SET', 'TCOMMIT', 'TRESTART', 'TROLLBACK', 'TSTART', 'USE', 'VIEW', 'WRITE', 'XECUTE'];
 //Listing of full name of intrinsic functions, with the exception of $Z.  Will be handled otherwise.

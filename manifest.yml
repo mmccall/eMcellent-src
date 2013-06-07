@@ -1,0 +1,17 @@
+--- 
+applications: 
+  .: 
+    mem: 1G
+    name: eMcellent
+    services: 
+      mongodb: 
+        type: mongodb
+    url: ${name}.${target-base}
+    instances: 1
+    infra: aws
+    framework: 
+      name: node
+      info: 
+        mem: 64M
+        description: Node.js Application
+        exec: 
