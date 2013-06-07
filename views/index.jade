@@ -2,8 +2,29 @@ extends layout
 
 block content
   div.container
-    h1= title
+    a(href="https://github.com/mmccall/eMcellent", target="_blank")
+      img(style="position: absolute; top: 0; left: 0; border: 0;", src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png", alt="Fork me on GitHub")
+    a#aboutButton(href="#about", role="button", data-toggle="modal")
+      h1= title
+    h6 {Click title for more info}
     p.lead A most excellent tool for making M/MUMPS code more readable.
+    div#about.modal.hide.fade
+      div.modal-header
+        button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+        h3 eMcellent
+      div.modal-body
+        p emCellent is a tool which tokenizes M/MUMPS code, and returns rendered HTML with context.  The resulting code then uses tooltips and popovers to provide supporting information about functionality, making the code easier to interpret.
+        p The code is also returned in JSON.  This tokenized code could be utilized in a number of ways, such as code refactoring.
+        p This project is licensed under the 
+          a(href="http://www.apache.org/licenses/LICENSE-2.0.html", target="_blank") Apache 2.0 License
+          .
+        p Much of the context in this project draws from 
+          i "The Standard MUMPS Pocket Guide 5th Edition
+          ," available from the 
+          a(href="http://www.vistaexpertise.net/mumpsbooks.html", target="_blank") VistA Expertise Network
+          .
+      div.modal-footer
+        a.btn(data-dismiss="modal") Close
     div.row
       form(action='/', method='post')
         textarea#codeInput.span11(name="inputCode", placeholder="Input code here...")= codeInput.codeValue
@@ -17,7 +38,7 @@ block content
         li
           a(href="#JSON", data-toggle="pill") JSON
       div.tab-content
-        pre#JSON.codeOutput.prettyprint.tab-pane= JSON.stringify(codeResponse.codeValue, null, ' ')
+        pre#JSON.codeOutput.prettyprint.linenums.tab-pane= JSON.stringify(codeResponse.codeValue, null, ' ')
         pre#MUMPS.codeOutput.tab-pane.active!= codeMUMPS
       br
   script

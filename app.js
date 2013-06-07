@@ -114,7 +114,7 @@ saveRec();
 
 //Home page Loading.
 app.get('/', function(req, res) {
-  var codeInput = {codeValue:"W HELLO WORLD!"}
+  var codeInput = {codeValue: "%HWRLD ;Creates 'HELLO WORLD' Message. \n W \"HELLO WORLD\""}
   var codeResponse = {codeValue:"OUTPUT HERE"}
   var codeMUMPS = mRender.mRender(codeResponse.codeValue);
   res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput, codeMUMPS:codeMUMPS});

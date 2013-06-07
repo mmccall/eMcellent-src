@@ -16,12 +16,17 @@ html, body {
 	background-color: rgb(77,255,255);
 	min-height:100%;
 	box-shadow: 0px 0px 3px 3px rgb(77,210,255);
+	padding-top: 20px;
 }
 
 .container h1 {
 	margin-top: 40px;
 	text-shadow: 0px 2px 3px #555;
 	color: rgb(255,255,255);
+}
+
+a#aboutButton:hover {
+	text-decoration: none;
 }
 
 #codeInput {
