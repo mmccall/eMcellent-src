@@ -43,7 +43,7 @@ var conn = mongoose.connect('mongodb://localhost/mdb', function(err) {
 var mSchema = new mongoose.Schema ({
   mCode: String,
   mCodeOutput: Object,
-  mCodeLintFlag: Number
+  mCodeProcessFlag: Number
 });
 
 var mModel = mongoose.model('mCode', mSchema);
@@ -70,46 +70,57 @@ app.configure('development', function(){
 
 app.post('/', function(req, res) {
 
-var mCodePost = new mModel({mCode: req.body.inputCode, mCodeLintFlag: 0, mCodeOutput: ""});
+var mCodeModel = new mModel({mCode: req.body.inputCode, mCodeProcessFlag: 0, mCodeOutput: ""});
+var mCodeInput = req.body.inputCode;
+var mCodeJSON = "";
+var mCodeHTML = "";
 
-function saveRec (qReq) {
-  mCodePost.save(function (err) {
+try {
+mCodeJSON = mRouting.mParse(req.body.inputCode);
+mCodeHTML = mRender.mRender(mCodeJSON);
+//Persisting queries for later analysis.
+saveRec(mCodeJSON);
+} catch (error) {
+console.log(error);
+mCodeJSON = {Error: error};
+mCodeHTML = "<span class=\"errorMessage\">Error: " + error + "</span>"
+}
+
+//Build the response.
+res.render('index', { title: 'eMcellent.', codeResponse:{codeValue: mCodeJSON}, codeInput:{codeValue: mCodeInput}, codeMUMPS:mCodeHTML});
+//Added for testing, may want to remove in production.
+mModel.collection.drop();
+
+
+
+function saveRec (mCodeOutput) {
+  mCodeModel.save(function (err) {
     if (!err) {
       console.log('Post Saved');
-      var mCodeOutput = mRouting.mParse(req.body.inputCode);
-      //console.log(mCodeOutput);
-      mCodePost.update({mCodeLintFlag: 1, mCodeOutput: mCodeOutput}, function (err, numberAffected, raw) {
+      mCodeModel.update({mCodeLintFlag: 1, mCodeOutput: mCodeOutput}, function (err, numberAffected, raw) {
         if (err) return err;
         console.log('The number of updated documents was %d', numberAffected);
         console.log('The raw response from Mongo was ', raw);
-        findRec({mCode: req.body.inputCode});
       });
     } else {
       throw err;
     }
   });
-}
+} 
 
-function findRec (qReq) {
-  var mQuery = mModel.findOne(qReq)
-  mQuery.select('mCode mCodeLintFlag mCodeOutput') 
-  mQuery.exec(function (err, qResponse) {
+//Not currently used, may revisit later.
+function findRec (mCodeQuery) {
+    var mQuery = mModel.findOne(mCodeQuery);
+    mQuery.select('mCode mCodeProcessFlag mCodeOutput') 
+    mQuery.exec(function (err, qResponse) {
         if (err) throw err;
         do
         var temp = 1;
-        while(qResponse.mCodeLintFlag === 0)
-        var codeResponse = {codeValue: (qResponse.mCodeOutput)}
-        var codeInput = {codeValue: qResponse.mCode}
-        var codeMUMPS = mRender.mRender(codeResponse.codeValue);
+        while(qResponse.mCodeProcessFlag === 0)
+
         //console.log(codeMUMPS);
-        //Added for testing, may want to remove in production.
-        mModel.collection.drop();
-      res.render('index', { title: 'eMcellent.', codeResponse:codeResponse, codeInput:codeInput, codeMUMPS:codeMUMPS});
-  });
-}
-
-saveRec();
-
+    });
+  }
 });
 
 //Home page Loading.

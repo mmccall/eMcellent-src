@@ -41,6 +41,15 @@ function mParse (inputCode) {
 
   //Walk each line.
   for (i=0;i<splitLines.length;i++) {
+    
+    //Some basic input validation, so bots don't blow up the database.
+    if (splitLines.length < 2) {
+      throw "Routines must be at least one line long."
+    }
+    if (splitLines[1].substring(0,1) !== " ") {
+      throw "Routines must have an indented second line.";
+    }
+
     //Extract Line Number.
     lineNum = i;
 
@@ -160,11 +169,10 @@ function mParse (inputCode) {
   }
   //Function Level descriptors.
   returnCode["mCode"] = returnArray;
-  //console.log(returnCode);
+
   //Perform Scrubbing on JSON Object.
   returnCode = mScrubbing.deTerse(returnCode);
   returnCode = mScrubbing.fnSET(returnCode);
-
 
   //console.log("FINAL RETURN: " + returnCode);
   return returnCode;

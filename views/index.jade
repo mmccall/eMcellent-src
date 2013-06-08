@@ -38,8 +38,8 @@ block content
         li
           a(href="#JSON", data-toggle="pill") JSON
       div.tab-content
-        pre#JSON.codeOutput.prettyprint.linenums.tab-pane= JSON.stringify(codeResponse.codeValue, null, ' ')
-        pre#MUMPS.codeOutput.tab-pane.active!= codeMUMPS
+        pre#JSON.codeOutput.prettyprint.tab-pane= JSON.stringify(codeResponse.codeValue, null, ' ')
+        pre#MUMPS.codeOutput.tab-pane.linenums.active!= codeMUMPS
       br
   script
     $(".lineLabel").tooltip()
