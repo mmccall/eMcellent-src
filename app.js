@@ -17,6 +17,7 @@ limitations under the License.
 /* Express dependencies */
 var express = require('express')
   , http = require('http')
+  , fs = require('fs')
   , path = require('path');
 
 /* M Parsing Package Dependencies. */
@@ -25,6 +26,9 @@ var mRouting = require('./app/mRouting.js');
 /* M Render Depency. */
 /* TODO:  Ideally should be client side, will require Jade overhaul. */
 var mRender = require('./app/mRender.js');
+
+/* Package listing import dependency. */
+var mPackages = require('./app/mPackages.js');
 
 /* Persistence dependencies */
 var mongoose = require('mongoose');
@@ -47,6 +51,10 @@ var mSchema = new mongoose.Schema ({
 });
 
 var mModel = mongoose.model('mCode', mSchema);
+
+//Import Packages List to JSON and persist.
+var mPackageLocation = "./source_data/Packages.csv";
+var mPackageJSON = mPackages.importPackages(mPackageLocation);
 
 /*Create Express app and Configure*/
 var app = express();

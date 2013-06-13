@@ -16,6 +16,7 @@ limitations under the License.
 
 //Requires modules to perform the actual cleaning.
 var mScrubbing = require('./mScrubbing.js');
+var mPackages = require('./mPackages.js');
 
 //Exports allow access in app.js
 exports.mParse = mParse;
@@ -173,6 +174,7 @@ function mParse (inputCode) {
   //Perform Scrubbing on JSON Object.
   returnCode = mScrubbing.deTerse(returnCode);
   returnCode = mScrubbing.fnSET(returnCode);
+  returnCode = mPackages.appendPackageData(returnCode);
 
   //console.log("FINAL RETURN: " + returnCode);
   return returnCode;
