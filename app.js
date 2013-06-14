@@ -84,18 +84,22 @@ var mCodeJSON = "";
 var mCodeHTML = "";
 
 try {
-mCodeJSON = mRouting.mParse(req.body.inputCode);
-mCodeHTML = mRender.mRender(mCodeJSON);
+mRouting.mParse(req.body.inputCode, function(mParseResponse) {
+  mCodeJSON = mParseResponse;
+  mCodeHTML = mRender.mRender(mParseResponse);
+  res.render('index', { title: 'eMcellent.', codeResponse:{codeValue: mCodeJSON}, codeInput:{codeValue: mCodeInput}, codeMUMPS:mCodeHTML});
+});
+
 //Persisting queries for later analysis.
 saveRec(mCodeJSON);
 } catch (error) {
 console.log(error);
 mCodeJSON = {Error: error};
-mCodeHTML = "<span class=\"errorMessage\">Error: " + error + "</span>"
+mCodeHTML = "<span class=\"errorMessage\">Error: " + error + "</span>";
+res.render('index', { title: 'eMcellent.', codeResponse:{codeValue: mCodeJSON}, codeInput:{codeValue: mCodeInput}, codeMUMPS:mCodeHTML});
 }
 
 //Build the response.
-res.render('index', { title: 'eMcellent.', codeResponse:{codeValue: mCodeJSON}, codeInput:{codeValue: mCodeInput}, codeMUMPS:mCodeHTML});
 //Added for testing, may want to remove in production.
 mModel.collection.drop();
 

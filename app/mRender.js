@@ -28,13 +28,38 @@ function mRender (inputJSON) {
 	var outputHTMLLineCommandPostConditionals = "";
 	var outputHTMLLineStart = "<span class=\"line\">";
 	var outputHTMLLineEnd = "</span>";
-
+	var outputHTMLLineTipContent = "";
 
 	for (var i in inputJSON.mCode) {
 
 		//Handle Labels.
-		if (inputJSON.mCode[i].lineLabel) {
-			outputHTMLLineLabel = "<a class=\"lineLabel\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"Label\">" + inputJSON.mCode[i].lineLabel + "</a>";
+		if (inputJSON.mCode[i].lineNumber === 0) {
+			outputHTMLLineTipContent = "<h4>VistA Information</h4>"
+			if (inputJSON.mCode[i].vistaPackageName) {
+				outputHTMLLineTipContent = outputHTMLLineTipContent + "<p>VistA Package Name:</br>" + inputJSON.mCode[i].vistaPackageName + "</p>"
+			}
+			if (inputJSON.mCode[i].vistaDirectoryName) {
+				outputHTMLLineTipContent = outputHTMLLineTipContent + "<p>VistA Directory Name:</br>" + inputJSON.mCode[i].vistaDirectoryName + "</p>"
+			}
+			if (inputJSON.mCode[i].vistaFileNumbers) {
+				outputHTMLLineTipContent = outputHTMLLineTipContent + "<p>VistA File Number(s):</br>" + inputJSON.mCode[i].vistaFileNumbers + "</p>"
+			}
+			if (inputJSON.mCode[i].vistaFileNames) {
+				outputHTMLLineTipContent = outputHTMLLineTipContent + "<p>VistA File Name(s):</br>" + inputJSON.mCode[i].vistaFileNames + "</p>"
+			}
+			if (inputJSON.mCode[i].vistaGlobals) {
+				outputHTMLLineTipContent = outputHTMLLineTipContent + "<p>VistA Globals:</br>" + inputJSON.mCode[i].vistaGlobals + "</p>"
+			}
+			if (inputJSON.mCode[i].vistaDocID) {
+				outputHTMLLineTipContent = outputHTMLLineTipContent + "<p>VistA Document ID:</br>" + inputJSON.mCode[i].vistaDocID + "</p>"
+			}
+
+
+
+			outputHTMLLineLabel = "<a class=\"lineLabel\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"<span class='lead'> Routine: " + inputJSON.mCode[i].lineLabel + "</span>\" data-html=true data-content=\""+ outputHTMLLineTipContent + "\">" + inputJSON.mCode[i].lineLabel + "</a>";
+			outputHTMLLine = outputHTMLLine + outputHTMLLineLabel;
+		} else if (inputJSON.mCode[i].lineLabel) {
+			outputHTMLLineLabel = "<a class=\"lineLabel\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"<span class='lead'> Label: " + inputJSON.mCode[i].lineLabel + "</span>\" data-html=true>" + inputJSON.mCode[i].lineLabel + "</a>";
 			outputHTMLLine = outputHTMLLine + outputHTMLLineLabel;
 		}
 

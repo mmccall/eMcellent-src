@@ -22,7 +22,7 @@ var mPackages = require('./mPackages.js');
 exports.mParse = mParse;
 
 //This function deconstructs the text-based input into a JSON Array.
-function mParse (inputCode) {
+function mParse (inputCode, mParseCallback) {
   //Count the lines and iterate each one.
   var returnArray = [];
   var returnCode = {};
@@ -47,7 +47,7 @@ function mParse (inputCode) {
     if (splitLines.length < 2) {
       throw "Routines must be at least one line long."
     }
-    if (splitLines[1].substring(0,1) !== " ") {
+    if (splitLines[1].substring(0,1) !== " " & splitLines[1].substring(0,1) !== "\t") {
       throw "Routines must have an indented second line.";
     }
 
@@ -55,13 +55,15 @@ function mParse (inputCode) {
     lineNum = i;
 
     //Extract Line Label.
-    if (splitLines[i].substring(0,1) === " ") {
+    if (splitLines[i].substring(0,1) === " " || splitLines[i].substring(0,1) === "\t") {
     lineLabel = "";
     lineExpression = splitLines[i].substring(1);
     } else {
-     var arrayLabels = splitLines[i].split(" ", 1);
+     var arrayLabels = splitLines[i].split(/[ \t]/, 1);
      lineLabel = arrayLabels[0];
-     lineExpression = splitLines[i].substring(lineLabel.length);
+     console.log(lineLabel);
+     lineExpression = splitLines[i].substring(lineLabel.length + 1);
+     console.log(lineExpression);
     }
 
     //Extract Line Comments.
@@ -174,8 +176,8 @@ function mParse (inputCode) {
   //Perform Scrubbing on JSON Object.
   returnCode = mScrubbing.deTerse(returnCode);
   returnCode = mScrubbing.fnSET(returnCode);
-  returnCode = mPackages.appendPackageData(returnCode);
 
-  //console.log("FINAL RETURN: " + returnCode);
-  return returnCode;
+  var packageCode = mPackages.appendPackageData(returnCode, function(response) {
+      mParseCallback(response);
+  });
 }
