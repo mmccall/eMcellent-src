@@ -54,19 +54,20 @@ function mRender (inputJSON) {
 				outputHTMLLineTipContent = outputHTMLLineTipContent + "<p>VistA Document ID:</br>" + inputJSON.mCode[i].vistaDocID + "</p>"
 			}
 
-
-
 			outputHTMLLineLabel = "<a class=\"lineLabel\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"<span class='lead'> Routine: " + inputJSON.mCode[i].lineLabel + "</span>\" data-html=true data-content=\""+ outputHTMLLineTipContent + "\">" + inputJSON.mCode[i].lineLabel + "</a>";
-			outputHTMLLine = outputHTMLLine + outputHTMLLineLabel;
+			outputHTMLLine = outputHTMLLine + outputHTMLLineLabel + "\t";
 		} else if (inputJSON.mCode[i].lineLabel) {
 			outputHTMLLineLabel = "<a class=\"lineLabel\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"<span class='lead'> Label: " + inputJSON.mCode[i].lineLabel + "</span>\" data-html=true>" + inputJSON.mCode[i].lineLabel + "</a>";
+			outputHTMLLine = outputHTMLLine + outputHTMLLineLabel + "\t";
+		} else {
+			outputHTMLLineLabel = "\t"
 			outputHTMLLine = outputHTMLLine + outputHTMLLineLabel;
 		}
 
 		//Handle Indentation.
 		if (inputJSON.mCode[i].lineIndentation > 0) {
 			outputHTMLLineIndentation = "<a class=\"lineIndentation\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"Line Indentation\">" + "....................".substring(0, inputJSON.mCode[i].lineIndentation) + "</a>";
-			outputHTMLLine = outputHTMLLine + " " + outputHTMLLineIndentation;
+			outputHTMLLine = outputHTMLLine + outputHTMLLineIndentation + " ";
 		}
 
 		//Handle Commands.
@@ -90,20 +91,27 @@ function mRender (inputJSON) {
 			} else {
 				outputHTMLLineCommand = outputHTMLLineCommand + outputHTMLLineCommandPostConditionals;
 			}
-			outputHTMLLine = outputHTMLLine + " " + outputHTMLLineCommand;
+			if (ii < inputJSON.mCode[i].commands.length - 1) {
+				outputHTMLLine = outputHTMLLine + outputHTMLLineCommand + " ";
+			} else {
+				outputHTMLLine = outputHTMLLine + outputHTMLLineCommand;
+			} 
 			outputHTMLLineCommandParameters = "";
 			outputHTMLLineCommandPostConditionals = "";
 			}
 		} 
 
 		//Handle Comments.
-		if (inputJSON.mCode[i].lineComment) {
+		if (inputJSON.mCode[i].lineComment && inputJSON.mCode[i].commands) {
 			outputHTMLLineComment = "<a class=\"lineComment\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"Comment\">;" + inputJSON.mCode[i].lineComment + "</a>";
 			outputHTMLLine = outputHTMLLine + " " + outputHTMLLineComment;
+		} else if (inputJSON.mCode[i].lineComment) {
+			outputHTMLLineComment = "<a class=\"lineComment\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"Comment\">;" + inputJSON.mCode[i].lineComment + "</a>";
+			outputHTMLLine = outputHTMLLine + outputHTMLLineComment;
 		//Fix for empty lines to have a comment marker.
-		} else if (outputHTMLLine.length === 0) {
+		} else if (outputHTMLLine === "\t") {
 			outputHTMLLineComment = "<a class=\"lineComment\" data-toggle=\"tooltip\" data-trigger=\"hover\" data-placement=\"top\" title=\"Comment\">;</a>";
-			outputHTMLLine = outputHTMLLine + " " + outputHTMLLineComment;
+			outputHTMLLine = outputHTMLLine + outputHTMLLineComment;
 		}
 
 	outputHTMLLine = outputHTMLLineStart + outputHTMLLine + outputHTMLLineEnd;

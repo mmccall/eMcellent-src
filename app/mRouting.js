@@ -81,9 +81,9 @@ function mParse (inputCode, mParseCallback) {
 
     //Extract Indentation.
     if (lineExpression.substring(0,1) === ".") {
-    lineIndentation = lineExpression.split(" ", 1)[0];
-    lineExpression = lineExpression.substring(lineIndentation.length + 1);
-    lineIndentation = lineIndentation.length;
+    lineIndentation = lineExpression.split(" ", 1)[0].lastIndexOf("\.") + 1;
+    lineExpression = lineExpression.substring(lineIndentation);
+    console.log(lineExpression);
     } else {
       lineIndentation = 0;
     }
