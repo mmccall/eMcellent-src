@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ---------------------------------------------------------------------------*/
 
-//Requires modules to perform the actual cleaning.
-var mScrubbing = require('./mScrubbing.js');
+var mSyntax = require('./mSyntax.js');
 var mPackages = require('./mPackages.js');
 
 //Exports allow access in app.js
@@ -185,9 +184,9 @@ function mParse (inputCode, mParseCallback) {
   //Function Level descriptors.
   returnCode["mCode"] = returnArray;
 
-  //Perform Scrubbing on JSON Object.
-  returnCode = mScrubbing.deTerse(returnCode);
-  returnCode = mScrubbing.fnSET(returnCode);
+  //Perform Syntax application on JSON Object.
+  returnCode = mSyntax.applyCommands(returnCode);
+  returnCode = mSyntax.applyFnSET(returnCode);
 
   var packageCode = mPackages.appendPackageData(returnCode, function(response) {
       mParseCallback(response);

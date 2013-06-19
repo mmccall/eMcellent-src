@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ---------------------------------------------------------------------------*/
 
-exports.deTerse = deTerse;
-exports.fnSET = fnSET;
+exports.applyCommands = applyCommands;
+exports.applyFnSET = applyFnSET;
 
-function deTerse (inputJSON) {
+function applyCommands (inputJSON) {
 
 var arrayCommands = [
       {commandFullName:'BREAK', commandSyntax: 'BREAK:Postconditional', commandDescription: 'Stops execution of current process for debugging until signaled.'},
@@ -75,7 +75,7 @@ return inputJSON;
 }
 
 //Contingent on functionFullName being set.
-function fnSET(inputJSON) {
+function applyFnSET(inputJSON) {
 
 var argArray = [];
 

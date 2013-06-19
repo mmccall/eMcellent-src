@@ -21,10 +21,9 @@ var express = require('express')
   , path = require('path');
 
 /* M Parsing Package Dependencies. */
-var mRouting = require('./app/mRouting.js');
+var mParsing = require('./app/mParsing.js');
 
-/* M Render Depency. */
-/* TODO:  Ideally should be client side, will require Jade overhaul. */
+/* M Rendering Package Depency. */
 var mRender = require('./app/mRender.js');
 
 /* Package listing import dependency. */
@@ -41,7 +40,6 @@ var conn = mongoose.connect('mongodb://localhost/mdb', function(err) {
     throw err;
   }
 });
-
 
 /* Mongo Schema and Code Declaration */
 var mSchema = new mongoose.Schema ({
@@ -84,12 +82,11 @@ var mCodeJSON = "";
 var mCodeHTML = "";
 
 try {
-mRouting.mParse(req.body.inputCode, function(mParseResponse) {
+mParsing.mParse(req.body.inputCode, function(mParseResponse) {
   mCodeJSON = mParseResponse;
   mCodeHTML = mRender.mRender(mParseResponse);
   res.render('index', { title: 'eMcellent.', codeResponse:{codeValue: mCodeJSON}, codeInput:{codeValue: mCodeInput}, codeMUMPS:mCodeHTML});
 });
-
 //Persisting queries for later analysis.
 saveRec(mCodeJSON);
 } catch (error) {
@@ -103,13 +100,11 @@ res.render('index', { title: 'eMcellent.', codeResponse:{codeValue: mCodeJSON}, 
 //Added for testing, may want to remove in production.
 mModel.collection.drop();
 
-
-
 function saveRec (mCodeOutput) {
   mCodeModel.save(function (err) {
     if (!err) {
       console.log('Post Saved');
-      mCodeModel.update({mCodeLintFlag: 1, mCodeOutput: mCodeOutput}, function (err, numberAffected, raw) {
+      mCodeModel.update({mCodeProcessFlag: 1, mCodeOutput: mCodeOutput}, function (err, numberAffected, raw) {
         if (err) return err;
         console.log('The number of updated documents was %d', numberAffected);
         console.log('The raw response from Mongo was ', raw);
