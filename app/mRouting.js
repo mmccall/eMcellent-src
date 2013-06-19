@@ -34,7 +34,7 @@ function mParse (inputCode, mParseCallback) {
   var lineLabel = "";
   var lineExpression = "";
   var lineComment = "";
-  var lineIndentation = "";
+  var lineIndentation = 0;
   var lineCommands = [];
   var lineRoutines = [];
   var lineParams = [];
@@ -61,9 +61,7 @@ function mParse (inputCode, mParseCallback) {
     } else {
      var arrayLabels = splitLines[i].split(/[ \t]/, 1);
      lineLabel = arrayLabels[0];
-     console.log(lineLabel);
      lineExpression = splitLines[i].substring(lineLabel.length + 1);
-     console.log(lineExpression);
     }
 
     //Extract Line Comments.
@@ -80,6 +78,19 @@ function mParse (inputCode, mParseCallback) {
     }
 
     //Extract Indentation.
+    var indentSplit = lineExpression.split(" ");
+    lineIndentation = 0;
+    lineExpression = "";
+    for (posIS=0;posIS < indentSplit.length; posIS++) {
+      if (indentSplit[posIS].substring(0,1) === ".") {
+        lineIndentation = lineIndentation + indentSplit[posIS].lastIndexOf("\.") + 1;
+      } else {
+        lineExpression = lineExpression + " " + indentSplit[posIS];
+        console.log(lineExpression);
+      }
+    }
+
+/*
     if (lineExpression.substring(0,1) === ".") {
     lineIndentation = lineExpression.split(" ", 1)[0].lastIndexOf("\.") + 1;
     lineExpression = lineExpression.substring(lineIndentation);
@@ -87,6 +98,7 @@ function mParse (inputCode, mParseCallback) {
     } else {
       lineIndentation = 0;
     }
+*/
 
     //Extract Expressions to array.
     var prePosLE = 0
