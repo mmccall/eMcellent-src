@@ -29,6 +29,9 @@ var mRender = require('./app/mRender.js');
 /* Package listing import dependency. */
 var mPackages = require('./app/mPackages.js');
 
+/* Package listing import dependency. */
+var mGlobals = require('./app/mGlobals.js');
+
 /* Persistence dependencies */
 var mongoose = require('mongoose');
 
@@ -53,6 +56,10 @@ var mModel = mongoose.model('mCode', mSchema);
 //Import Packages List to JSON and persist.
 var mPackageLocation = "./source_data/Packages.csv";
 var mPackageJSON = mPackages.importPackages(mPackageLocation);
+
+//Import Globals List from Directory to JSON and persist.
+var mVistaDirectory = "./source_data/"
+var mGlobalsJSON = mGlobals.importGlobals(mVistaDirectory);
 
 /*Create Express app and Configure*/
 var app = express();

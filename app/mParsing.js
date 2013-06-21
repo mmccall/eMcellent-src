@@ -85,7 +85,6 @@ function mParse (inputCode, mParseCallback) {
         lineIndentation = lineIndentation + indentSplit[posIS].lastIndexOf("\.") + 1;
       } else {
         lineExpression = lineExpression + " " + indentSplit[posIS];
-        console.log(lineExpression);
       }
     }
 

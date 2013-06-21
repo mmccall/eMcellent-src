@@ -83,57 +83,84 @@ function appendGlobalData (inputJSON, callback) {
 //Function will recursively scan all directories in a VistA-M based repository.
 function importGlobals (inputDir) {
 
-	var globalLineJSON = {};
-	var globalArray = [];
+	var vistaDirectory = inputDir + "Packages/"
 	var globalJSON = {};
+	var globalArray = [];
+	var globalFileJSON = {};
+	var globalFileJSONArray = [];
+	var globalFileJSONArrayJSON = {};
+	var currentDir = "";
 
-	fs.readFile(inputFile, 'utf-8', function(err, data) {
+	fs.readdir(vistaDirectory, function(err, files) {
 		if (err) throw err;
-		var splitFile = data.split("\n");
-		for (i=1;i<splitFile.length;i++) {
-			var splitLine = splitFile[i].split(",");
-			if (splitLine[0]) {
-				globalLineJSON["globalName"] = splitLine[0];
+		for (i=0; i<files.length;i++) {
+			var fileStats = fs.statSync(vistaDirectory + files[i]);
+			if (fileStats.isDirectory()) {
+				currentDir = vistaDirectory + files[i] + "/";
+				var packageFiles = fs.readdirSync(currentDir);
+				for (ii=0;ii<packageFiles.length;ii++) {
+					//Ignore hidden files on OSX.
+					if(packageFiles[ii].substring(0,1) !== ".") {
+						var subFileStats = fs.statSync(currentDir + packageFiles[ii]);
+						if (subFileStats.isDirectory() && packageFiles[ii] === "Globals") {
+						var currentSubDir = currentDir + packageFiles[ii] + "/"
+						var globalFiles = fs.readdirSync(currentSubDir);
+							for (iii=0;iii<globalFiles.length;iii++) {
+								if (globalFiles[iii].substring(globalFiles[iii].length - 4) === ".zwr") {
+									globalFileJSON["vistaGlobalPackage"] = files[i];
+									var fileContents = fs.readFileSync(currentSubDir + globalFiles[iii], 'utf-8');
+									var fileContents = fileContents.split("\n");
+									globalFileJSON["vistaGlobalFileName"] = fileContents[0];
+									globalFileJSON["vistaGlobalNumberSpace"] = "2";
+									//Skip 2 lines, 1 for file name, and 1 for ZWR command.
+									for (iiii=2;iiii<fileContents.length;iiii++) {
+										//Reset skip line for globalNumber Assignment.
+										globalFileJSONArrayJSON["vistaGlobalAssignmentNumber"] = iiii - 2;
+										//Separate Global from assignment.
+										if (fileContents[iiii]) {
+											var fileContentsSplit = fileContents[iiii].split("=");
+											if (fileContentsSplit[0] !== '""' && fileContentsSplit[0]) {
+												globalFileJSONArrayJSON["vistaGlobalAssignment"] = fileContentsSplit[0];
+												//TODO:  Further Split.
+											}
+											if (fileContentsSplit[1] !== '""' && fileContentsSplit[1]) {
+												globalFileJSONArrayJSON["vistaGlobalAssignmentValue"] = fileContentsSplit[1];
+												//TODO:  Further Split.
+											}
+										globalFileJSONArray.push(globalFileJSONArrayJSON);
+										globalFileJSONArrayJSON = {};
+										}
+									}
+								globalFileJSON["vistaGlobalAssignments"] = globalFileJSONArray;
+								globalArray.push(globalFileJSON);
+								//console.log(globalFileJSON);
+								globalFileJSON = {};
+								}
+							} 
+						}
+					}
+				}
 			}
-			if (splitLine[1]) {
-				globalLineJSON["directoryName"] = splitLine[1];
-			}
-			if (splitLine[2]) {
-				globalLineJSON["prefixes"] = splitLine[2];
-			}
-			if (splitLine[3]) {
-				globalLineJSON["fileNumbers"] = splitLine[3];
-			}
-			if (splitLine[4]) {
-				globalLineJSON["fileNames"] = splitLine[4];
-			}
-			if (splitLine[5]) {
-				globalLineJSON["globals"] = splitLine[5];
-			}
-			if (splitLine[6]) {
-				globalLineJSON["vdlID"] = splitLine[6];
-			}
-		globalArray.push(globalLineJSON);
-		globalLineJSON = {};
 		}
-
-	//Persist to MongoDB.
-
-	/*mongodb.connect("mongodb://localhost/mdb", function(err, db) {
-    	var collection = db.createCollection('globals', function(err, coll) {
+		//Persist to MongoDB.
+/*
+		mongodb.connect("mongodb://localhost/mdb", function(err, db) {
+    	var collection = db.createCollection('vistaGlobals', function(err, coll) {
     		if (err) throw err;
     		coll.remove(function(err, result) {
     			coll.insert(globalArray, {w:1}, function(err, result) {
-    			if (err) throw err;
-    			console.log("Global table loaded");
+    				if (err) throw err;
+    				console.log("Globals tables loaded");
     			});
     		});
+    		});
     	});
-    });*/
 
-	globalJSON["globals"] = globalArray;
+  */
+
+	//globalJSON["vistaGlobals"] = globalArray;
+	//console.log(globalJSON);
 	return globalJSON;
 	});
-
 };
 
