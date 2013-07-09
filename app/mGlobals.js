@@ -81,6 +81,7 @@ function appendGlobalData (inputJSON, callback) {
 };
 
 //Function will recursively scan all directories in a VistA-M based repository.
+//Input takes the base directory.
 function importGlobals (inputDir) {
 
 	var vistaDirectory = inputDir + "Packages/"
@@ -99,7 +100,7 @@ function importGlobals (inputDir) {
 				currentDir = vistaDirectory + files[i] + "/";
 				var packageFiles = fs.readdirSync(currentDir);
 				for (ii=0;ii<packageFiles.length;ii++) {
-					//Ignore hidden files on OSX.
+					//Ignore hidden files.
 					if(packageFiles[ii].substring(0,1) !== ".") {
 						var subFileStats = fs.statSync(currentDir + packageFiles[ii]);
 						if (subFileStats.isDirectory() && packageFiles[ii] === "Globals") {
@@ -133,7 +134,7 @@ function importGlobals (inputDir) {
 									}
 								globalFileJSON["vistaGlobalAssignments"] = globalFileJSONArray;
 								globalArray.push(globalFileJSON);
-								//console.log(globalFileJSON);
+								//console.log(globalArray);
 								globalFileJSON = {};
 								}
 							} 
@@ -143,24 +144,28 @@ function importGlobals (inputDir) {
 			}
 		}
 		//Persist to MongoDB.
-/*
+		//Should have pre-qualifier for dropping, not part of this callback cycle.
 		mongodb.connect("mongodb://localhost/mdb", function(err, db) {
-    	var collection = db.createCollection('vistaGlobals', function(err, coll) {
+    		var collection = db.createCollection('vistaGlobal', {w:1}, function(err, globalCollection) {
     		if (err) throw err;
-    		coll.remove(function(err, result) {
-    			coll.insert(globalArray, {w:1}, function(err, result) {
-    				if (err) throw err;
-    				console.log("Globals tables loaded");
+    		globalCollection.remove({}, {w:1}, function(err, result) {
+    		if (err) throw err;
+    		/*globalCollection.count(function(err, count) {
+    			console.log(count);
+    		});*/
+    		for (i=0;i<globalArray.length;i++) {
+    			globalCollection.insert(globalArray[i], {w:1}, function(err, result) {
+    			if (err) throw err;
+    			console.log("Global Loaded: " + result[0].vistaGlobalPackage + " - " + result[0].vistaGlobalFileName);
     			});
+    		};
     		});
-    		});
+
+    	    });
     	});
 
-  */
-
-	//globalJSON["vistaGlobals"] = globalArray;
-	//console.log(globalJSON);
-	return globalJSON;
+globalJSON["vistaGlobals"] = globalArray;
+return globalJSON;
 	});
 };
 

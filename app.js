@@ -58,6 +58,7 @@ var mPackageLocation = "./source_data/Packages.csv";
 var mPackageJSON = mPackages.importPackages(mPackageLocation);
 
 //Import Globals List from Directory to JSON and persist.
+//Only returns a list of loaded globals, not full values.
 var mVistaDirectory = "./source_data/"
 var mGlobalsJSON = mGlobals.importGlobals(mVistaDirectory);
 

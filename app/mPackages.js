@@ -150,8 +150,10 @@ function importPackages (inputFile) {
     	var collection = db.createCollection('packages', function(err, coll) {
     		if (err) throw err;
     		coll.remove(function(err, result) {
+    			if (err) throw err;
     			coll.insert(packageArray, {w:1}, function(err, result) {
     			if (err) throw err;
+    			db.close();
     			console.log("Package table loaded");
     			});
     		});
